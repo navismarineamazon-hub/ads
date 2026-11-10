@@ -1,0 +1,317 @@
+api_base: https://advertising-api-eu.amazon.com
+profile_id: 1763296236563585
+凭据文件: .ads-credentials.env
+管道:
+  双写: true
+  db_path: data/ads.db
+基线文件: baseline.yaml
+保护词文件: 保护词.txt
+报表:
+- 名称: 搜索词
+  报告类型: spSearchTerm
+  维度: &id001
+  - searchTerm
+  列: &id002
+  - campaignId
+  - campaignName
+  - adGroupId
+  - adGroupName
+  - keyword
+  - matchType
+  - searchTerm
+  - impressions
+  - clicks
+  - cost
+  - sales7d
+  - purchases7d
+  天数: 7
+  仅自动广告: true
+  归因等待天数: 3
+- 名称: 广告活动
+  报告类型: spCampaigns
+  维度: &id003
+  - campaign
+  指标: &id004
+  - impressions
+  - clicks
+  - cost
+  - sales7d
+  - purchases7d
+  - campaignBudgetAmount
+  - campaignStatus
+  天数: 7
+  仅自动广告: true
+  归因等待天数: 3
+- 名称: AUTO投放
+  报告类型: spTargeting
+  维度: &id005
+  - targeting
+  列: &id006
+  - campaignId
+  - campaignName
+  - adGroupId
+  - adGroupName
+  - keywordId
+  - keywordBid
+  - keywordType
+  - adKeywordStatus
+  - targeting
+  - impressions
+  - clicks
+  - cost
+  - sales7d
+  - purchases7d
+  过滤器: &id007
+  - field: keywordType
+    values:
+    - TARGETING_EXPRESSION
+    - TARGETING_EXPRESSION_PREDEFINED
+  天数: 7
+  仅自动广告: true
+  归因等待天数: 3
+- 名称: 搜索词历史
+  报告类型: spSearchTerm
+  维度: *id001
+  列: *id002
+  天数: 30
+  仅自动广告: false
+  归因等待天数: 3
+- 名称: 广告活动历史
+  报告类型: spCampaigns
+  维度: *id003
+  指标: *id004
+  天数: 14
+  仅自动广告: true
+  归因等待天数: 3
+- 名称: AUTO投放历史
+  报告类型: spTargeting
+  维度: *id005
+  列: *id006
+  过滤器: *id007
+  天数: 14
+  仅自动广告: true
+  归因等待天数: 3
+- 名称: 商品定位投放
+  报告类型: spTargeting
+  维度:
+  - targeting
+  列:
+  - campaignId
+  - campaignName
+  - adGroupId
+  - adGroupName
+  - keywordId
+  - keywordBid
+  - keywordType
+  - adKeywordStatus
+  - targeting
+  - impressions
+  - clicks
+  - cost
+  - sales7d
+  - purchases7d
+  过滤器:
+  - field: keywordType
+    values:
+    - TARGETING_EXPRESSION
+    - TARGETING_EXPRESSION_PREDEFINED
+  天数: 7
+  仅自动广告: false
+  归因等待天数: 3
+- 名称: 位置表现
+  报告类型: spCampaigns
+  维度: &id008
+  - campaign
+  - campaignPlacement
+  指标: &id009
+  - impressions
+  - clicks
+  - cost
+  - sales7d
+  - purchases7d
+  天数: 7
+  仅自动广告: false
+  归因等待天数: 3
+- 名称: 位置表现历史
+  报告类型: spCampaigns
+  维度: *id008
+  指标: *id009
+  天数: 14
+  仅自动广告: false
+  归因等待天数: 3
+- 名称: BROAD投放
+  报告类型: spTargeting
+  维度: &id010
+  - targeting
+  列: &id011
+  - campaignId
+  - campaignName
+  - adGroupId
+  - adGroupName
+  - keywordId
+  - keywordBid
+  - keyword
+  - matchType
+  - adKeywordStatus
+  - impressions
+  - clicks
+  - cost
+  - sales7d
+  - purchases7d
+  过滤器: &id012
+  - field: keywordType
+    values:
+    - BROAD
+  天数: 7
+  仅自动广告: false
+  归因等待天数: 3
+- 名称: BROAD投放历史
+  报告类型: spTargeting
+  维度: *id010
+  列: *id011
+  过滤器: *id012
+  天数: 14
+  仅自动广告: false
+  归因等待天数: 3
+规则:
+- 名称: 零单浪费-否定精确
+  数据: 搜索词
+  条件: purchases7d == 0 and (clicks > no_order_click_hard_min or cost >= no_order_spend_threshold
+    and clicks >= no_order_click_threshold or cost >= target_cpa * high_spend_cpa_multiplier)
+    and not 保护词
+  动作: 否定
+  置信: needs_human
+- 名称: 类目尺码不符-否定
+  数据: 搜索词
+  条件: purchases7d == 0 and (('glove' in searchTerm or 'boot' in searchTerm or 'shoe'
+    in searchTerm or 'sock' in searchTerm or 'sunglass' in searchTerm or 'backpack'
+    in searchTerm or 'umbrella' in searchTerm or 'knife' in searchTerm or 'wallet'
+    in searchTerm or 'scarf' in searchTerm or 'swimsuit' in searchTerm or 'bikini'
+    in searchTerm or 'sandal' in searchTerm or 'slipper' in searchTerm or 'towel'
+    in searchTerm or 'blanket' in searchTerm or 'helmet' in searchTerm or 'goggle'
+    in searchTerm) or (('4xl' in searchTerm or '5xl' in searchTerm or '6xl' in searchTerm
+    or 'xxs' in searchTerm or 'toddler' in searchTerm or 'kids' in searchTerm or 'youth'
+    in searchTerm or 'infant' in searchTerm or 'baby' in searchTerm) and 'P03' not
+    in campaignName)) and not 保护词
+  动作: 否定
+  置信: needs_human
+- 名称: 出单词-收割BROAD
+  数据: 搜索词
+  条件: purchases7d >= harvest_min_orders and acos7d <= target_acos * harvest_acos_multiplier
+    and not 保护词
+  动作: 收割
+  置信: high if purchases7d >= min_winner_orders else 'medium'
+- 名称: 预算打满有单-加预算
+  数据: 广告活动
+  过滤: campaignStatus == 'ENABLED'
+  条件: avgDailyCost >= campaignBudgetAmount * budget_utilization and purchases7d >=
+    min_winner_orders and acos7d <= target_acos
+  动作: 预算
+  参数: round(campaignBudgetAmount * (1 + budget_increase_cap), 2)
+  置信: high
+- 名称: 零单高花费-减预算
+  数据: 广告活动
+  过滤: campaignStatus == 'ENABLED'
+  条件: purchases7d == 0 and cost >= target_cpa * high_spend_cpa_multiplier
+  动作: 预算
+  参数: round(max(budget_min, campaignBudgetAmount * (1 - budget_decrease_cap)), 2)
+  置信: medium
+- 名称: AUTO零单高花费-降Bid
+  数据: AUTO投放
+  条件: purchases7d == 0 and cost >= target_cpa * high_spend_cpa_multiplier
+  动作: BID
+  方向: 减价
+  比例: 0.2
+  置信: medium
+- 名称: AUTO高ACOS-降Bid
+  数据: AUTO投放
+  条件: purchases7d >= 1 and acos7d > target_acos and clicks >= bid_min_clicks
+  动作: BID
+  方向: 减价
+  比例: 0.15
+  置信: medium
+  比例表达式: abs(target_acos / acos7d - 1) * bid_response_strength
+- 名称: AUTO稳定低ACOS-加Bid
+  数据: AUTO投放
+  条件: purchases7d >= min_winner_orders and acos7d <= target_acos * 0.7 and clicks
+    >= bid_min_clicks
+  动作: BID
+  方向: 加价
+  比例: 0.15
+  置信: high
+  比例表达式: abs(target_acos / acos7d - 1) * bid_response_strength
+- 名称: BROAD零单高花费-降Bid
+  数据: BROAD投放
+  条件: purchases7d == 0 and cost >= target_cpa * high_spend_cpa_multiplier
+  动作: BID
+  方向: 减价
+  比例: 0.2
+  置信: medium
+- 名称: BROAD高ACOS-降Bid
+  数据: BROAD投放
+  条件: purchases7d >= 1 and acos7d > target_acos and clicks >= broad_bid_min_clicks
+  动作: BID
+  方向: 减价
+  比例: 0.12
+  置信: medium
+  比例表达式: abs(target_acos / acos7d - 1) * broad_bid_response_strength
+- 名称: BROAD稳定低ACOS-加Bid
+  数据: BROAD投放
+  条件: purchases7d >= min_winner_orders and acos7d <= target_acos * 0.7 and clicks
+    >= broad_bid_min_clicks
+  动作: BID
+  方向: 加价
+  比例: 0.12
+  置信: high
+  比例表达式: abs(target_acos / acos7d - 1) * broad_bid_response_strength
+- 名称: TOS高ACOS-降位置Bid
+  数据: 位置表现
+  过滤: placement == 'Top of Search on-Amazon'
+  条件: purchases7d >= 1 and acos7d > target_acos * 1.2 and clicks >= placement_min_clicks
+  动作: 位置BID
+  投放位置: PLACEMENT_TOP
+  方向: 减价
+  比例: 0.15
+  置信: medium
+- 名称: TOS稳定低ACOS-加位置Bid
+  数据: 位置表现
+  过滤: placement == 'Top of Search on-Amazon'
+  条件: purchases7d >= min_winner_orders and acos7d <= target_acos * 0.7 and clicks
+    >= placement_min_clicks
+  动作: 位置BID
+  投放位置: PLACEMENT_TOP
+  方向: 加价
+  比例: 0.15
+  置信: high
+- 名称: PP高ACOS-降位置Bid
+  数据: 位置表现
+  过滤: placement == 'Detail Page on-Amazon'
+  条件: purchases7d >= 1 and acos7d > target_acos * 1.5 and clicks >= placement_min_clicks
+  动作: 位置BID
+  投放位置: PLACEMENT_PRODUCT_PAGE
+  方向: 减价
+  比例: 0.2
+  置信: medium
+安全:
+  忽略ASIN: true
+  收割去重: true
+  映射文件: data/auto_broad_map.json
+  广泛词索引: data/broad_kw_index.json
+  产品线映射文件: 产品线.yaml
+  产品定位文件: 产品定位.yaml
+  单批上限: 200
+  bid_min: 0.2
+  bid_max: 5.0
+  bid_cooldown_days: 3
+  观察名单最低花费: 5
+输出:
+  保留轮数: 2
+同步:
+  结构缓存小时: 6
+  关键词缓存小时: 24
+轮询:
+  初始间隔秒: 30
+  最大间隔秒: 120
+  超时秒: 3600
+收割竞价:
+  获取Amazon推荐: true

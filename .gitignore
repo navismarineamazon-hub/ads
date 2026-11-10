@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+*.token_cache.json
+sp_api.env
+.ads-credentials.env
+sites/*/.ads-credentials.env
+*.db
+*.sqlite3
+output/
+logs/

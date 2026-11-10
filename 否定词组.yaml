@@ -1,0 +1,38 @@
+# 否定词组.yaml —— 类目/尺码不符的否定词表，供 rules.py 的"类目尺码不符-否定"规则使用。
+# 命中这里的词时，除了对触发的完整 searchTerm 做 NEGATIVE_EXACT，还会对命中的词组本身
+# 额外生成一条 NEGATIVE_PHRASE（见 rules.py expand_negative），避免同一无关词换个搭配
+# 又要再零单一轮才能被否掉。
+
+类目词:        # 跟雨衣类目完全不相关的商品词，任何产品码都不排除
+  - glove
+  - boot
+  - shoe
+  - sock
+  - sunglass
+  - backpack
+  - umbrella
+  - knife
+  - wallet
+  - scarf
+  - swimsuit
+  - bikini
+  - sandal
+  - slipper
+  - towel
+  - blanket
+  - helmet
+  - goggle
+
+尺码词:        # 本产品线没有的尺码/人群词；尺码词例外产品码里的产品码不受此表约束
+  - 4xl
+  - 5xl
+  - 6xl
+  - xxs
+  - toddler
+  - kids
+  - youth
+  - infant
+  - baby
+
+尺码词例外产品码:  # product_code() 解析出的产品码，命中则跳过尺码词判断
+  - P03

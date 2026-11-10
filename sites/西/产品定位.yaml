@@ -1,0 +1,191 @@
+# 产品定位.yaml —— 产品代码 -> 类目/阶段/价格梯度组。
+# 草稿 v2，已按用户反馈修正；仍有少量字段标"待确认"。规则引擎目前还没有读这个文件 ——
+# 等 fishing/sailing 那几个"待确认"也核对完再接进 rules.py。
+#
+# 字段说明:
+#   类目:     workwear / fishing / sailing / other(非雨衣品类) / test(测试品，低优先) / n/a(账户级，非单一产品)
+#   阶段:     mature(成熟期) / weak(卖得差，出词库缺口报表) / new(新品，出新词挖掘报表) / unknown(待确认)
+#   价格梯度组: 同一个值 = 同梯度，重叠检测对同组内的不建议"减少投放"，只展示数据。
+#              没有明显证据的留空，不瞎编梯度分组。
+
+# ---- 03/05/07 价格梯度家族 (用户确认: NW001最便宜 -> NW003 -> NW005 -> NW007最贵，
+# 全部算 workwear 类目，成熟期) ----
+
+NW001:            # 该系列最便宜的档位 (用户确认)
+  类目: workwear
+  阶段: mature
+  价格梯度组: ladder_rainsuit_core
+  备注: ""
+
+"001":            # 001-BROAD。product_code()解析出来是裸数字001，跟NW001是同一个产品
+  类目: workwear
+  阶段: mature
+  价格梯度组: ladder_rainsuit_core
+  备注: ""
+
+"03":             # NW003 RAIN SUIT ("05"档位，用户确认)
+  类目: workwear
+  阶段: mature
+  价格梯度组: ladder_rainsuit_core
+  备注: ""
+
+"103":            # NW003 纯色款 (用户确认: 跟03同一产品，色款变体，不是独立价格档位)
+  类目: workwear
+  阶段: mature
+  价格梯度组: ladder_rainsuit_core
+  备注: "NW003的纯色colorway，和03同一个产品"
+
+"203":            # NW003 拼色款 (用户确认: 跟03同一产品，色款变体)
+  类目: workwear
+  阶段: mature
+  价格梯度组: ladder_rainsuit_core
+  备注: "NW003的拼色colorway，和03同一个产品"
+
+"105":            # NW005 ("05"档位，用户确认)
+  类目: workwear
+  阶段: mature
+  价格梯度组: ladder_rainsuit_core
+  备注: ""
+
+NW017:            # = NW007 ("07"档位，用户确认)
+  类目: workwear
+  阶段: mature
+  价格梯度组: ladder_rainsuit_core
+  备注: ""
+
+W17:              # NW007("07")同款女装款 (用户确认)
+  类目: workwear
+  阶段: mature
+  价格梯度组: ladder_rainsuit_core
+  备注: "07(NW017)的女装同款，和NW017同一个产品不同款式"
+
+P03:              # NW003 variant - RAIN BIB (背带裤款型，跟03同价位但不同款型，不是独立梯度档位)
+  类目: workwear
+  阶段: mature
+  价格梯度组: ""
+  备注: "款型变体(bib vs suit)，不是03.05.07价格梯度里的独立档位——是否要跟03合并成同一分析单元待确认"
+
+# ---- 其它 workwear ----
+
+"101":            # NW101 Premium Oxford Hi-Vis $149
+  类目: workwear
+  阶段: new         # 用户明确: 101是售卖不久的新品
+  价格梯度组: ""
+  备注: ""
+
+"160":            # NW160 Softshell $99
+  类目: workwear
+  阶段: weak        # 用户明确: 卖得差，需要词库缺口/优化搜索词报表
+  价格梯度组: ""
+  备注: ""
+
+"201":            # NW201 Premium Work Rainwear $149
+  类目: workwear
+  阶段: new         # 用户明确: 201是售卖不久的新品
+  价格梯度组: ""
+  备注: ""
+
+V03:              # Hi-Vis Work Rainwear $109-119
+  类目: workwear
+  阶段: mature      # 猜测: 活动结构较完整(Broad/Exact/position/AU四个)，待确认
+  价格梯度组: ladder_workwear_V
+  备注: "活动名 V03/V05-ASIN-position-0817 证实 V03和V05 是梯度对"
+
+V05:              # Durable Hi-Vis Rainwear $109-119
+  类目: workwear
+  阶段: mature      # 猜测，待确认
+  价格梯度组: ladder_workwear_V
+  备注: ""
+
+# ---- fishing (待确认阶段) ----
+
+"235":            # NF235 Premium Fishing Rain Gear $139
+  类目: fishing
+  阶段: mature      # 猜测: AU+KT-Broad两个活动，有一定规模，待确认
+  价格梯度组: ""
+  备注: ""
+
+NW009:            # Commercial Fishing Rain Gear $159
+  类目: fishing
+  阶段: unknown     # 猜测: 只有1个AUTO活动，可能是growth阶段，待确认
+  价格梯度组: ""
+  备注: ""
+
+# ---- sailing (待确认阶段) ----
+
+"347":            # NS347 Coastal Sailing Gear family (347S=suit默认, 347B=bib)
+  类目: sailing
+  阶段: mature
+  价格梯度组: ""
+  备注: ""
+
+"347S":
+  类目: sailing
+  阶段: mature
+  价格梯度组: ""
+  备注: ""
+
+347B:
+  类目: sailing
+  阶段: unknown     # 只有1个test活动，可能是刚加的变体
+  价格梯度组: ""
+  备注: ""
+
+"147":            # NS147 Performance Inshore Sailing $199
+  类目: sailing
+  阶段: mature      # 3个活动(AUTO+position+KT-Broad)，结构完整
+  价格梯度组: ""
+  备注: ""
+
+147S:
+  类目: sailing
+  阶段: mature
+  价格梯度组: ""
+  备注: ""
+
+549W:             # Women's Offshore Sailing $299
+  类目: sailing
+  阶段: unknown     # 猜测: 2个活动，中等规模，待确认mature还是growth
+  价格梯度组: ""
+  备注: ""
+
+"547":            # Pro Offshore Sailing $349-399
+  类目: sailing
+  阶段: mature      # 4个活动，结构最完整的sailing产品
+  价格梯度组: ""
+  备注: ""
+
+NS691:            # MSKU NS691-LB-S 的广告活动 (Amazon自动命名, ENABLED未暂停, 仍在投放)
+  类目: sailing
+  阶段: unknown
+  价格梯度组: ""
+  备注: "campaignId 140208975237549。product_code()实际解析出来的代码是裸的'MSKU'
+    不是'NS691'，这里登记的key暂时匹配不到这条活动——需要你决定: (a) 去Amazon后台
+    把这条活动改名成规范格式，之后这条记录就能自动匹配; 还是 (b) 我在代码里加一条
+    针对这个campaignId的特例映射。"
+
+# ---- 低优先/排除 ----
+
+"263":            # 备忘录: 测试品，大概率不会补货
+  类目: test
+  阶段: test
+  价格梯度组: ""
+  备注: "低优先，建议重叠/新词报表都跳过这个代码"
+
+W319:             # 备忘录: 测试品
+  类目: test
+  阶段: test
+  价格梯度组: ""
+  备注: "低优先，同上"
+
+DRY:              # Dry Bag-自动-1022，是防水袋不是雨衣
+  类目: other
+  阶段: unknown
+  价格梯度组: ""
+  备注: "是干袋不是雨衣，排除在类目/阶段分析之外(用户确认)"
+
+ALL:              # ALL-自动/手动，账户级总活动不是单一产品
+  类目: n/a
+  阶段: n/a
+  价格梯度组: ""
+  备注: "账户级活动，排除在产品定位分析之外(用户确认)"
